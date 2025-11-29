@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formularz Zamówienia Pasz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .products-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+        }
+        
+        .products-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+        
+        .product-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+        
+        .product-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .product-name {
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .product-price {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        
+        .product-available {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        
+        .available-yes {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .available-no {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .quantity-input {
+            width: 120px;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            text-align: center;
+        }
+        
+        .total-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .total-label {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        
+        .total-amount {
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2em;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.1em;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .product-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .product-price {
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 Formularz Zamówienia Pasz</h1>
+        <p class="subtitle">Wybierz produkty i ilości. Zamów kilka rodzajów paszy jednocześnie.</p>
+        
+        <div id="errorMessage" class="error" style="display: none;"></div>
+        <div id="successMessage" class="success" style="display: none;"></div>
+        
+        <form id="orderForm" style="display: none;">
+            <div class="form-group">
+                <label for="name">Imię i Nazwisko *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Telefon *</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="address">Adres dostawy *</label>
+                <textarea id="address" name="address" required></textarea>
+            </div>
+            
+            <div class="products-section">
+                <div class="products-title">🛒 Wybierz Produkty</div>
+                <div id="productsList"></div>
+            </div>
+            
+            <div class="total-section">
+                <div class="total-label">Wartość zamówienia:</div>
+                <div class="total-amount" id="totalAmount">0.00 PLN</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Uwagi dodatkowe</label>
+                <textarea id="notes" name="notes"></textarea>
+            </div>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">Złóż zamówienie</button>
+        </form>
+        
+        <div id="loadingIndicator" class="loading">
+            <div class="spinner"></div>
+            Ładowanie produktów...
+        </div>
+    </div>
+
+    <script>
+        // KONFIGURACJA - WPISZ TUTAJ SWOJE URL WEBHOOKÓW Z N8N
+        const CONFIG = {
+            getProductsUrl: 'https://TWOJ-N8N.app.n8n.cloud/webhook/get-products',
+            submitOrderUrl: 'https://TWOJ-N8N.app.n8n.cloud/webhook/submit-order'
+        };
+
+        let products = [];
+        
+        // Ładowanie produktów przy starcie
+        async function loadProducts() {
+            try {
+                const response = await fetch(CONFIG.getProductsUrl);
+                if (!response.ok) throw new Error('Błąd ładowania produktów');
+                
+                products = await response.json();
+                displayProducts();
+                
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('orderForm').style.display = 'block';
+            } catch (error) {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                showError('Nie udało się załadować produktów. Spróbuj odświeżyć stronę.');
+            }
+        }
+        
+        // Wyświetlanie produktów
+        function displayProducts() {
+            const container = document.getElementById('productsList');
+            container.innerHTML = '';
+            
+            products.forEach((product, index) => {
+                const available = product['Dostępność'] === 'Tak';
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product-item';
+                productDiv.innerHTML = `
+                    <div class="product-header">
+                        <div class="product-name">${product['Nazwa produktu']}</div>
+                        <div class="product-price">${product['Cena za jednostkę']} PLN/worek</div>
+                    </div>
+                    <span class="product-available ${available ? 'available-yes' : 'available-no'}">
+                        ${available ? '✓ Dostępne' : '⚠ Sprawdź dostępność'}
+                    </span>
+                    <div style="margin-top: 15px;">
+                        <label style="display: inline-block; margin-right: 10px;">Ilość worków:</label>
+                        <input type="number" 
+                               class="quantity-input" 
+                               id="qty-${index}" 
+                               min="0" 
+                               value="0" 
+                               onchange="calculateTotal()">
+                    </div>
+                `;
+                container.appendChild(productDiv);
+            });
+        }
+        
+        // Obliczanie sumy
+        function calculateTotal() {
+            let total = 0;
+            products.forEach((product, index) => {
+                const qty = parseInt(document.getElementById(`qty-${index}`).value) || 0;
+                const price = parseFloat(product['Cena za jednostkę']) || 0;
+                total += qty * price;
+            });
+            document.getElementById('totalAmount').textContent = total.toFixed(2) + ' PLN';
+        }
+        
+        // Wysyłanie formularza
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Wysyłanie...';
+            
+            // Zbieranie danych
+            const selectedProducts = [];
+            products.forEach((product, index) => {
+                const qty = parseInt(document.getElementById(`qty-${index}`).value) || 0;
+                if (qty > 0) {
+                    selectedProducts.push({
+                        nazwa: product['Nazwa produktu'],
+                        kodSKU: product['Kod SKU'],
+                        ilosc: qty,
+                        cenaJednostkowa: parseFloat(product['Cena za jednostkę']),
+                        dostepnosc: product['Dostępność']
+                    });
+                }
+            });
+            
+            if (selectedProducts.length === 0) {
+                showError('Wybierz przynajmniej jeden produkt!');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Złóż zamówienie';
+                return;
+            }
+            
+            const orderData = {
+                imieNazwisko: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                telefon: document.getElementById('phone').value,
+                adresDostawy: document.getElementById('address').value,
+                uwagi: document.getElementById('notes').value || 'Brak',
+                produkty: selectedProducts
+            };
+            
+            try {
+                const response = await fetch(CONFIG.submitOrderUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                if (!response.ok) throw new Error('Błąd wysyłania');
+                
+                const result = await response.json();
+                showSuccess(`Zamówienie ${result.numerZamowienia} zostało złożone! Sprawdź email.`);
+                document.getElementById('orderForm').reset();
+                calculateTotal();
+                
+            } catch (error) {
+                showError('Nie udało się wysłać zamówienia. Spróbuj ponownie.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Złóż zamówienie';
+            }
+        });
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 5000);
+        }
+        
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.innerHTML = `<strong>✓ Sukces!</strong><br>${message}`;
+            successDiv.style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+        
+        // Start
+        loadProducts();
+    </script>
+</body>
+</html>
