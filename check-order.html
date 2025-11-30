@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sprawdź Zamówienie - Pasza</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .search-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .search-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .order-details {
+            margin-top: 30px;
+            display: none;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9em;
+            margin: 10px 0;
+        }
+        
+        .status-nowe {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-realizacji {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-wyslane {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-dostarczone {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .info-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        
+        .info-label {
+            font-weight: 700;
+            color: #495057;
+            min-width: 180px;
+        }
+        
+        .info-value {
+            color: #212529;
+        }
+        
+        .products-section {
+            margin-top: 30px;
+        }
+        
+        .products-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .product-item {
+            background: white;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .product-name {
+            font-weight: 700;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .product-price {
+            color: #667eea;
+            font-weight: 700;
+        }
+        
+        .product-details {
+            color: #666;
+            font-size: 0.95em;
+        }
+        
+        .total-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .total-label {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+        
+        .total-amount {
+            font-size: 2em;
+            font-weight: 700;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .info-row {
+                flex-direction: column;
+            }
+            
+            .info-label {
+                margin-bottom: 5px;
+            }
+            
+            .product-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .product-price {
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Powrót do formularza</a>
+        
+        <h1>🔍 Sprawdź Zamówienie</h1>
+        <p class="subtitle">Wpisz numer zamówienia i email, aby sprawdzić status.</p>
+        
+        <div id="errorMessage" class="error" style="display: none;"></div>
+        
+        <form id="searchForm">
+            <div class="form-group">
+                <label for="orderNumber">Numer zamówienia *</label>
+                <input type="text" id="orderNumber" placeholder="np. ORD-2025-123456" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" placeholder="twoj@email.pl" required>
+            </div>
+            
+            <button type="submit" class="search-btn" id="searchBtn">Sprawdź zamówienie</button>
+        </form>
+        
+        <div id="orderDetails" class="order-details">
+            <div class="info-section">
+                <h2 style="margin-bottom: 20px;">📋 Informacje o zamówieniu</h2>
+                
+                <div class="info-row">
+                    <div class="info-label">Status:</div>
+                    <div class="info-value">
+                        <span id="orderStatus" class="status-badge"></span>
+                    </div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Numer zamówienia:</div>
+                    <div class="info-value" id="orderNumberDisplay"></div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Data zamówienia:</div>
+                    <div class="info-value" id="orderDate"></div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Imię i nazwisko:</div>
+                    <div class="info-value" id="customerName"></div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Telefon:</div>
+                    <div class="info-value" id="customerPhone"></div>
+                </div>
+                
+                <div class="info-row">
+                    <div class="info-label">Adres dostawy:</div>
+                    <div class="info-value" id="deliveryAddress"></div>
+                </div>
+                
+                <div class="info-row" id="notesRow" style="display: none;">
+                    <div class="info-label">Uwagi:</div>
+                    <div class="info-value" id="orderNotes"></div>
+                </div>
+            </div>
+            
+            <div class="products-section">
+                <div class="products-title">🛒 Zamówione produkty</div>
+                <div id="productsList"></div>
+            </div>
+            
+            <div class="total-section">
+                <div class="total-label">Wartość całkowita:</div>
+                <div class="total-amount" id="totalAmount"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // KONFIGURACJA - WPISZ URL WEBHOOKA Z N8N
+        const CONFIG = {
+            checkOrderUrl: 'https://aneta147-20147.wykr.es/webhook/check-order'
+        };
+
+        document.getElementById('searchForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const searchBtn = document.getElementById('searchBtn');
+            searchBtn.disabled = true;
+            searchBtn.innerHTML = '<div class="spinner"></div>';
+            
+            const orderNumber = document.getElementById('orderNumber').value.trim();
+            const email = document.getElementById('email').value.trim();
+            
+            try {
+                const response = await fetch(CONFIG.checkOrderUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        numerZamowienia: orderNumber,
+                        email: email
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Błąd wyszukiwania');
+                
+                const result = await response.json();
+                
+                if (!result.found) {
+                    showError(result.message);
+                    document.getElementById('orderDetails').style.display = 'none';
+                } else {
+                    hideError();
+                    displayOrderDetails(result);
+                    document.getElementById('orderDetails').style.display = 'block';
+                    window.scrollTo({ top: document.getElementById('orderDetails').offsetTop - 20, behavior: 'smooth' });
+                }
+                
+            } catch (error) {
+                showError('Nie udało się wyszukać zamówienia. Spróbuj ponownie.');
+                document.getElementById('orderDetails').style.display = 'none';
+            } finally {
+                searchBtn.disabled = false;
+                searchBtn.textContent = 'Sprawdź zamówienie';
+            }
+        });
+        
+        function displayOrderDetails(order) {
+            // Status
+            const statusBadge = document.getElementById('orderStatus');
+            statusBadge.textContent = order.status;
+            statusBadge.className = 'status-badge status-' + order.status.toLowerCase().replace(' ', '-');
+            
+            // Podstawowe informacje
+            document.getElementById('orderNumberDisplay').textContent = order.numerZamowienia;
+            document.getElementById('orderDate').textContent = order.data;
+            document.getElementById('customerName').textContent = order.imieNazwisko;
+            document.getElementById('customerPhone').textContent = order.telefon;
+            document.getElementById('deliveryAddress').textContent = order.adresDostawy;
+            
+            // Uwagi
+            if (order.uwagi && order.uwagi !== 'Brak') {
+                document.getElementById('orderNotes').textContent = order.uwagi;
+                document.getElementById('notesRow').style.display = 'flex';
+            } else {
+                document.getElementById('notesRow').style.display = 'none';
+            }
+            
+            // Produkty
+            const productsList = document.getElementById('productsList');
+            productsList.innerHTML = '';
+            
+            order.produkty.forEach(product => {
+                const productDiv = document.createElement('div');
+                productDiv.className = 'product-item';
+                productDiv.innerHTML = `
+                    <div class="product-header">
+                        <div class="product-name">${product.nazwa}</div>
+                        <div class="product-price">${product.wartoscLinii} PLN</div>
+                    </div>
+                    <div class="product-details">
+                        Kod: ${product.kodSKU} | Ilość: ${product.ilosc} worków | 
+                        Cena jednostkowa: ${product.cenaJednostkowa} PLN
+                    </div>
+                `;
+                productsList.appendChild(productDiv);
+            });
+            
+            // Suma
+            document.getElementById('totalAmount').textContent = order.wartoscCalkowita + ' PLN';
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+        
+        function hideError() {
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
